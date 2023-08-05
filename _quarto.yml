@@ -1,1 +1,30 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Amin Shoarinejad"
+  navbar:
+    left:
+      - href: about.qmd
+        text: About
+      - href: index.qmd
+        text: Home
+
+# format:
+#   html:
+#     theme: cosmo
+#     css: styles.css
+#     toc: true
+
+
+format:
+  html:
+    page-layout: full
+    sidebar: false
+    theme: 
+      - green_theme.scss
+    # css: styles.css
+    mainfont: Nunito
+    toc: true
 
