@@ -10,7 +10,6 @@ website:
         text: About
       - href: index.qmd
         text: Home
-      #- about.qmd
 
 # format:
 #   html:
@@ -28,3 +27,4 @@ format:
     # css: styles.css
     mainfont: Nunito
     toc: true
+
