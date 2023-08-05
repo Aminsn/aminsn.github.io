@@ -26,7 +26,7 @@ I'm Amin Shoarinejad (Shoari Nejad), a dedicated Data Scientist with a knack for
 
 ### Skills & Interests
 
-{{< fa screwdriver-wrench >}} Coding -- {{< fa bug >}} Data Science -- {{< fa book >}} Machine Learning -- {{< fa camera-retro >}} Bayesian Statistical modelling -- {{< fa person-chalkboard >}} Sports
+{{< fa screwdriver-wrench >}} Coding -- {{< fa bug >}} Data Science -- {{< fa book >}} Machine Learning -- {{< fa camera-retro >}} Bayesian Statistical Modelling -- {{< fa person-chalkboard >}} Sports
 :::
 
 
