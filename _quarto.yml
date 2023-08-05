@@ -6,6 +6,8 @@ website:
   title: "Amin Shoarinejad"
   navbar:
     left:
+      - href: about.qmd
+        text: About
       - href: index.qmd
         text: Home
       #- about.qmd
