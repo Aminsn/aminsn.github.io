@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.433">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Amin Shoarinejad">
+<meta name="dcterms.date" content="2023-08-06">
 <meta name="description" content="A guide to modeling non-linear effects using random walk with the R-INLA package.">
 
 <title>Amin Shoarinejad - Modeling Non-linear Effects using Random Walk in R-INLA</title>
@@ -91,7 +92,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
@@ -141,7 +143,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#requirements" id="toc-requirements" class="nav-link active" data-scroll-target="#requirements">Requirements</a></li>
+  <li><a href="#random-walk-a-brief-overview" id="toc-random-walk-a-brief-overview" class="nav-link" data-scroll-target="#random-walk-a-brief-overview">Random Walk: A Brief Overview</a></li>
+  <li><a href="#using-random-walk-to-model-non-linearity" id="toc-using-random-walk-to-model-non-linearity" class="nav-link" data-scroll-target="#using-random-walk-to-model-non-linearity">Using Random Walk to Model Non-Linearity</a></li>
+  <li><a href="#inference" id="toc-inference" class="nav-link" data-scroll-target="#inference">Inference</a></li>
+  <li><a href="#quick-recap" id="toc-quick-recap" class="nav-link" data-scroll-target="#quick-recap">Quick Recap</a></li>
   </ul>
 </nav>
     </div>
@@ -151,7 +157,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Modeling Non-linear Effects using Random Walk in R-INLA</h1>
-</div>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Bayesian Statistics</div>
+    <div class="quarto-category">INLA</div>
+    <div class="quarto-category">Random Walk</div>
+  </div>
+  </div>
 
 <div>
   <div class="description">
@@ -169,6 +181,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           </div>
   </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 6, 2023</p>
+    </div>
+  </div>
   
     
   </div>
@@ -181,55 +199,125 @@ pre.sourceCode {
   background-color: #F0F0F0;
 }
 </style>
-<p>Random walk models provide a powerful technique for modeling non-linear effects in statistical analysis. In this post, we will explore how to use the Integrated Nested Laplace Approximation (INLA) method with a random walk model in R. This approach can be very useful in capturing the complex relationships in your data.</p>
-<p>First, we’ll need to load the INLA library. If you don’t have it installed, you can follow the instructions <a href="https://www.r-inla.org/download-install">here</a> to install it.</p>
-<section id="data" class="level1">
-<h1>Data</h1>
-<p>First, we generate <code>x</code> which are uniform random values in the interval [10, 30]. Mathematically, this can be expressed as:</p>
-<p><span class="math display">\[X \sim \text{Uniform}(10, 30)\]</span></p>
-<p>Next, we generate <code>y</code> which is a sinusoidal function of <code>x</code> with added Gaussian noise. The mathematical expression for <code>y</code> is:</p>
-<p><span class="math display">\[Y = \sin(X) + \epsilon\]</span></p>
-<p>where</p>
-<p><span class="math display">\[\epsilon \sim N(0, 0.3^2)\]</span></p>
-<p>Here, <span class="math inline">\(N\)</span> denotes the Gaussian or Normal distribution, <span class="math inline">\(0\)</span> is the mean of the noise, and <span class="math inline">\(0.3\)</span> is the standard deviation.</p>
-<p>This simulation creates a dataset where <code>y</code> is a noisy sinusoidal function of <code>x</code>. The purpose of this simulation is to create a non-linear relationship between <code>x</code> and <code>y</code> that we can model using the random walk model in R-INLA.</p>
+<p>Random walk models can be very useful for modeling non-linear effects in statistical analysis. In this post, we will explore how to use the Integrated Nested Laplace Approximation (INLA) method with a random walk model in R to show how to model non-linear relationships.</p>
+<section id="requirements" class="level1">
+<h1>Requirements</h1>
+<p>We’ll need to load the INLA library in R. If you don’t have R-INLA installed, you can follow the instructions <a href="https://www.r-inla.org/download-install">here</a> to install it.</p>
+</section>
+<section id="random-walk-a-brief-overview" class="level1">
+<h1>Random Walk: A Brief Overview</h1>
+<p>Imagine a stock price that moves daily. You might think today’s price is the best predictor of tomorrow’s price, with some random fluctuation added. This idea is central to a random walk model. Mathematically, this can be expressed as:</p>
+<p><span class="math display">\[P_{t}  = P_{t-1} + \epsilon_{t}\]</span> where:</p>
+<ul>
+<li><span class="math inline">\(P_{t}\)</span> is the price at time <span class="math inline">\(t\)</span>.</li>
+<li><span class="math inline">\(\epsilon_{t}\)</span> is a random error term at time <span class="math inline">\(t\)</span>, typically assumed to be normally distributed with mean 0.</li>
+</ul>
+<p>This model suggests that the change in value from one time point to the next is purely random, and historical changes don’t forecast future ones.</p>
+</section>
+<section id="using-random-walk-to-model-non-linearity" class="level1">
+<h1>Using Random Walk to Model Non-Linearity</h1>
+<p>While random walks are mostly used in time series analysis (like in the stock price example) but the idea could be easily applied to problems where there is no time dimension. In the following example we will see how we can use random walk to recover a non-linear relationship between two continuous variables.</p>
+<p>Suppose <code>x</code> is continuous and uniformly distributed between [-100, 100], represented as:</p>
+<p><span class="math display">\[x \sim \text{Uniform}(-100, 100)\]</span></p>
+<p>We then describe <code>y</code> as follows:</p>
+<p><span class="math display">\[y = f(x) + \epsilon\]</span> where <span class="math inline">\(f(x)\)</span> represents a non-linear function, and <span class="math inline">\(\epsilon\)</span> is the error term. For this example:</p>
+<p><span class="math display">\[f(x) = \frac{1}{1+e^{-0.1x}}\]</span> <span class="math display">\[\epsilon \sim N(0, 0.3^2)\]</span></p>
+<p>We will use R to simulate data according to the above specifications:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(INLA)</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulating some data </span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">runif</span>(<span class="dv">100</span>,<span class="dv">10</span>,<span class="dv">30</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">sin</span>(x) <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">100</span>,<span class="dv">0</span>,<span class="fl">0.3</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x=</span>x, <span class="at">y=</span>y)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># bining the predictor </span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>x.class <span class="ot">=</span> <span class="fu">inla.group</span>(df<span class="sc">$</span>x, <span class="at">n =</span> <span class="dv">25</span>, <span class="at">method =</span> <span class="st">"cut"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># model definition</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>formula <span class="ot">=</span> y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> <span class="fu">f</span>(x.class, <span class="at">model =</span> <span class="st">'rw1'</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting the model</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>model <span class="ot">=</span> <span class="fu">inla</span>(formula, <span class="at">data =</span> df)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># extracting the estimated effects</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>class_id <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x.class<span class="sc">$</span>ID</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>mean <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x.class<span class="sc">$</span>mean</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x.class<span class="sc">$</span><span class="st">`</span><span class="at">0.025quant</span><span class="st">`</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>higher <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x.class<span class="sc">$</span><span class="st">`</span><span class="at">0.975quant</span><span class="st">`</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the results</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(class_id, mean, <span class="at">col =</span> <span class="st">'red'</span>)</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(class_id, lower, <span class="at">col =</span> <span class="st">'blue'</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(class_id, higher, <span class="at">col =</span> <span class="st">'blue'</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># define the sigmoid function</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sigmoid <span class="ot">=</span> <span class="cf">function</span>(x){<span class="dv">1</span><span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(<span class="sc">-</span>x))}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">100</span> <span class="co"># num of observations</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">sort</span>(<span class="fu">runif</span>(N, <span class="sc">-</span><span class="dv">100</span> , <span class="dv">100</span>)) <span class="co"># sort for line plot</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>eps <span class="ot">=</span> <span class="fu">rnorm</span>(N,<span class="dv">0</span>,<span class="fl">0.05</span>) </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fx <span class="ot">=</span> <span class="fu">sigmoid</span>(.<span class="dv">1</span><span class="sc">*</span>x)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> fx <span class="sc">+</span> eps</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x=</span>x, <span class="at">y=</span>y, <span class="at">fx =</span> fx)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting the data</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(x,y)) <span class="sc">+</span> </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(x,fx), <span class="at">color =</span> <span class="st">'red'</span>) <span class="sc">+</span> </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#FDFBF7"</span>),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#FDFBF7"</span>),</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">"Comic Sans MS"</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'X'</span>, <span class="at">y =</span> <span class="st">'Y'</span>, <span class="at">title =</span> <span class="st">'Scatter plot of x vs y and the true underlying function'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="figs/unnamed-chunk-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="figs/unnamed-chunk-2.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
+<p>The red line in the plot above shows the target function we’re aiming to infer from the data.</p>
+</section>
+<section id="inference" class="level1">
+<h1>Inference</h1>
+<p>To infer the true relationship, we can model the data generating process using a random walk. To do so, first we need to discretize <code>x</code> into <span class="math inline">\(k\)</span> bins to get <span class="math inline">\({x_{1},...,{x_{k}}}\)</span> discrete points (more on binning <a href="https://en.wikipedia.org/wiki/Data_binning">here</a>). We then define our model as follows:</p>
+<p><span class="math display">\[y_{i} \sim N(\beta_{x_{i}}, \sigma^2)\]</span> <span class="math display">\[\beta_{x_{i}} \sim N(\beta_{x_{i-1}}, \sigma_{f}^2)\]</span></p>
+<p>where <span class="math inline">\(E(y_{i}) = \beta_{x_{i}}\)</span> and <span class="math inline">\(E(\beta_{x_{i}}) = \beta_{x_{i-1}}\)</span>. After defining the model, we must decide on the inference method, such as MLE, MCMC, etc. In this case, we employ the Laplace approximation using INLA. It’s important to note that INLA adopts a Bayesian approach, which requires us to define priors for our model parameters. For this example, we’ll stick with INLA’s default settings. To learn more about them, simply use the <code>inla.doc("model_name")</code> command, for example, <code>inla.doc("rw1")</code> for the random walk model.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(INLA)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># binning the predictor</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>x_binned <span class="ot">=</span> <span class="fu">inla.group</span>(df<span class="sc">$</span>x, <span class="at">n =</span> <span class="dv">10</span>, <span class="at">method =</span> <span class="st">"cut"</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># model definition</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>formula <span class="ot">=</span> y <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> <span class="fu">f</span>(x_binned, <span class="at">model =</span> <span class="st">'rw1'</span>, <span class="at">constr=</span><span class="cn">FALSE</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting the model</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>model <span class="ot">=</span> <span class="fu">inla</span>(formula, <span class="at">data =</span> df)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># extracting the estimated effects</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>bin_center <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x_binned<span class="sc">$</span>ID</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>mean <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x_binned<span class="sc">$</span>mean</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x_binned<span class="sc">$</span><span class="st">`</span><span class="at">0.025quant</span><span class="st">`</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">=</span> model<span class="sc">$</span>summary.random<span class="sc">$</span>x_binned<span class="sc">$</span><span class="st">`</span><span class="at">0.975quant</span><span class="st">`</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>df_pred <span class="ot">=</span> <span class="fu">data.frame</span>(bin_center, mean, lower, upper)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> df_pred, </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x =</span> bin_center, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper), </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill =</span> <span class="st">"grey70"</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> df, <span class="fu">aes</span>(x,y)) <span class="sc">+</span> </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span> </span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> df_pred, <span class="fu">aes</span>(bin_center, mean), <span class="at">color =</span><span class="st">'red'</span>) <span class="sc">+</span> <span class="fu">theme</span>(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#FDFBF7"</span>),</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#FDFBF7"</span>),</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">family =</span> <span class="st">"Comic Sans MS"</span>)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'X'</span>, <span class="at">y =</span> <span class="st">'Y'</span>, <span class="at">title =</span> <span class="st">'Scatter plot of x vs y and the fitted function'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="figs/unnamed-chunk-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As you can see in the plot above, the estimated function, represented in red, provides a good approximation of the true function. This suggests that the random walk model effectively captures the original function.</p>
+</section>
+<section id="quick-recap" class="level1">
+<h1>Quick Recap</h1>
+<ul>
+<li><p><strong>Random Walk Model:</strong> A simple yet effective model that assumes the change in value from one time point to the next is purely random.</p></li>
+<li><p><strong>Application Beyond Time Series:</strong> Though commonly associated with time series data, the random walk model can be applied to scenarios without a time dimension.</p></li>
+<li><p><strong>Practical Implementation:</strong> We provided a simple example where we simulated data based on a given relationship and then used the random walk approach with INLA to recover the original relationship from the data.</p></li>
+</ul>
 
 
 </section>
