@@ -19,5 +19,19 @@
     "title": "Amin Shoarinejad",
     "section": "",
     "text": "I’m Amin Shoarinejad (Shoari Nejad), a dedicated Data Scientist with a knack for unraveling the ‘why’ with meticulous statistical models and forecasting the ‘what’ using advanced machine learning and deep learning techniques. My passion for data transcends the entire pipeline - I find thrill in every step, from the nitty-gritty of data cleaning (surprising, isn’t it?) to the exhilarating task of transforming raw data into actionable insights. With each dataset, I aim to uncover hidden patterns, unlock value, and craft a compelling data-driven story. Welcome to my world, where data isn’t just numbers, but a catalyst for change.\n\n\n Coding – Data Science – Machine Learning – Bayesian Statistical Modelling – Sports"
+  },
+  {
+    "objectID": "blogs/2023/inla-random-walk/index.html",
+    "href": "blogs/2023/inla-random-walk/index.html",
+    "title": "Modeling Non-linear Effects using Random Walk in R-INLA",
+    "section": "",
+    "text": "Random walk models provide a powerful technique for modeling non-linear effects in statistical analysis. In this post, we will explore how to use the Integrated Nested Laplace Approximation (INLA) method with a random walk model in R. This approach can be very useful in capturing the complex relationships in your data.\nFirst, we’ll need to load the INLA library. If you don’t have it installed, you can follow the instructions here to install it.\n\nData\nFirst, we generate x which are uniform random values in the interval [10, 30]. Mathematically, this can be expressed as:\n\\[X \\sim \\text{Uniform}(10, 30)\\]\nNext, we generate y which is a sinusoidal function of x with added Gaussian noise. The mathematical expression for y is:\n\\[Y = \\sin(X) + \\epsilon\\]\nwhere\n\\[\\epsilon \\sim N(0, 0.3^2)\\]\nHere, \\(N\\) denotes the Gaussian or Normal distribution, \\(0\\) is the mean of the noise, and \\(0.3\\) is the standard deviation.\nThis simulation creates a dataset where y is a noisy sinusoidal function of x. The purpose of this simulation is to create a non-linear relationship between x and y that we can model using the random walk model in R-INLA.\n\nlibrary(INLA)\n\n# Simulating some data \nx = runif(100,10,30)\ny = sin(x) + rnorm(100,0,0.3)\n\ndf = data.frame(x=x, y=y)\n\n# bining the predictor \ndf$x.class = inla.group(df$x, n = 25, method = \"cut\")\n\n# model definition\nformula = y ~ -1 + f(x.class, model = 'rw1')\n\n# fitting the model\nmodel = inla(formula, data = df)\n\n# extracting the estimated effects\nclass_id = model$summary.random$x.class$ID\nmean = model$summary.random$x.class$mean\nlower = model$summary.random$x.class$`0.025quant`\nhigher = model$summary.random$x.class$`0.975quant`\n\n# plotting the results\nplot(x,y)\nlines(class_id, mean, col = 'red')\nlines(class_id, lower, col = 'blue', lty = 2)\nlines(class_id, higher, col = 'blue', lty = 2)"
+  },
+  {
+    "objectID": "blogs/index.html",
+    "href": "blogs/index.html",
+    "title": "Amin Shoarinejad",
+    "section": "",
+    "text": "Modeling Non-linear Effects using Random Walk in R-INLA\n\n\n\n\n\nA guide to modeling non-linear effects using random walk with the R-INLA package.\n\n\n\n\n\n\nAmin Shoarinejad\n\n\n\n\n\n\nNo matching items"
   }
 ]

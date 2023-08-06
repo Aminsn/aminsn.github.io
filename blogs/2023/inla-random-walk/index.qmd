@@ -1,0 +1,91 @@
+---
+title: "Modeling Non-linear Effects using Random Walk in R-INLA"
+description: "A guide to modeling non-linear effects using random walk with the R-INLA package."
+author: "Amin Shoarinejad"
+
+# Execution options
+execute: 
+  freeze: true
+---
+
+<style>
+pre.sourceCode {
+  background-color: #F0F0F0;
+}
+</style>
+
+
+Random walk models provide a powerful technique for modeling non-linear effects in statistical analysis. In this post, we will explore how to use the Integrated Nested Laplace Approximation (INLA) method with a random walk model in R. This approach can be very useful in capturing the complex relationships in your data.
+
+First, we'll need to load the INLA library. If you don't have it installed, you can follow the instructions [here](https://www.r-inla.org/download-install) to install it.
+
+
+# Data
+First, we generate `x` which are uniform random values in the interval [10, 30]. Mathematically, this can be expressed as:
+
+$$X \sim \text{Uniform}(10, 30)$$
+
+Next, we generate `y` which is a sinusoidal function of `x` with added Gaussian noise. The mathematical expression for `y` is:
+
+$$Y = \sin(X) + \epsilon$$
+
+where 
+
+$$\epsilon \sim N(0, 0.3^2)$$
+
+Here, $N$ denotes the Gaussian or Normal distribution, $0$ is the mean of the noise, and $0.3$ is the standard deviation.
+
+This simulation creates a dataset where `y` is a noisy sinusoidal function of `x`. The purpose of this simulation is to create a non-linear relationship between `x` and `y` that we can model using the random walk model in R-INLA.
+
+
+```{r setup, include=F}
+knitr::opts_chunk$set(
+  cache = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  comment = ' ',
+  fig.path = 'figs/',
+  fig.align = "center",
+  fig.process = function(x) {
+    x2 = sub('-\\d+([.][a-z]+)$', '\\1', x)
+    if (file.rename(x, x2))
+      x2
+    else
+      x
+  }
+)
+```
+
+
+```{r}
+library(INLA)
+
+# Simulating some data 
+x = runif(100,10,30)
+y = sin(x) + rnorm(100,0,0.3)
+
+df = data.frame(x=x, y=y)
+
+# bining the predictor 
+df$x.class = inla.group(df$x, n = 25, method = "cut")
+
+# model definition
+formula = y ~ -1 + f(x.class, model = 'rw1')
+
+# fitting the model
+model = inla(formula, data = df)
+
+# extracting the estimated effects
+class_id = model$summary.random$x.class$ID
+mean = model$summary.random$x.class$mean
+lower = model$summary.random$x.class$`0.025quant`
+higher = model$summary.random$x.class$`0.975quant`
+
+# plotting the results
+plot(x,y)
+lines(class_id, mean, col = 'red')
+lines(class_id, lower, col = 'blue', lty = 2)
+lines(class_id, higher, col = 'blue', lty = 2)
+```
+
+

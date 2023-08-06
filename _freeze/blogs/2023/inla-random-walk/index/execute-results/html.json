@@ -1,0 +1,14 @@
+{
+  "hash": "969ecb7ee9afc1a83b35ddc836a84b1d",
+  "result": {
+    "markdown": "---\ntitle: \"Modeling Non-linear Effects using Random Walk in R-INLA\"\ndescription: \"A guide to modeling non-linear effects using random walk with the R-INLA package.\"\nauthor: \"Amin Shoarinejad\"\n\n# Execution options\nexecute: \n  freeze: true\n---\n\n\n<style>\npre.sourceCode {\n  background-color: #F0F0F0;\n}\n</style>\n\n\nRandom walk models provide a powerful technique for modeling non-linear effects in statistical analysis. In this post, we will explore how to use the Integrated Nested Laplace Approximation (INLA) method with a random walk model in R. This approach can be very useful in capturing the complex relationships in your data.\n\nFirst, we'll need to load the INLA library. If you don't have it installed, you can follow the instructions [here](https://www.r-inla.org/download-install) to install it.\n\n\n# Data\nFirst, we generate `x` which are uniform random values in the interval [10, 30]. Mathematically, this can be expressed as:\n\n$$X \\sim \\text{Uniform}(10, 30)$$\n\nNext, we generate `y` which is a sinusoidal function of `x` with added Gaussian noise. The mathematical expression for `y` is:\n\n$$Y = \\sin(X) + \\epsilon$$\n\nwhere \n\n$$\\epsilon \\sim N(0, 0.3^2)$$\n\nHere, $N$ denotes the Gaussian or Normal distribution, $0$ is the mean of the noise, and $0.3$ is the standard deviation.\n\nThis simulation creates a dataset where `y` is a noisy sinusoidal function of `x`. The purpose of this simulation is to create a non-linear relationship between `x` and `y` that we can model using the random walk model in R-INLA.\n\n\n\n\n\n::: {.cell layout-align=\"center\"}\n\n```{.r .cell-code}\nlibrary(INLA)\n\n# Simulating some data \nx = runif(100,10,30)\ny = sin(x) + rnorm(100,0,0.3)\n\ndf = data.frame(x=x, y=y)\n\n# bining the predictor \ndf$x.class = inla.group(df$x, n = 25, method = \"cut\")\n\n# model definition\nformula = y ~ -1 + f(x.class, model = 'rw1')\n\n# fitting the model\nmodel = inla(formula, data = df)\n\n# extracting the estimated effects\nclass_id = model$summary.random$x.class$ID\nmean = model$summary.random$x.class$mean\nlower = model$summary.random$x.class$`0.025quant`\nhigher = model$summary.random$x.class$`0.975quant`\n\n# plotting the results\nplot(x,y)\nlines(class_id, mean, col = 'red')\nlines(class_id, lower, col = 'blue', lty = 2)\nlines(class_id, higher, col = 'blue', lty = 2)\n```\n\n::: {.cell-output-display}\n![](figs/unnamed-chunk-1.png){fig-align='center' width=672}\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
