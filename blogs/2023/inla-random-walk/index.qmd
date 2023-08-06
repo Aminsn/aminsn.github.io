@@ -32,7 +32,7 @@ where:
 - $P_{t}$ is the price at time $t$. 
 - $\epsilon_{t}$ is a random error term at time $t$, typically assumed to be normally distributed with mean 0. 
 
-This model suggests that the change in value from one time point to the next is purely random, and historical changes don't forecast future ones.
+This model suggests that the change in value from one time point to the next is purely random, hence the name random walk.  
 
 # Using Random Walk to Model Non-Linearity
 While random walks are mostly used in time series analysis (like in the stock price example) but the idea could be easily applied to problems where there is no time dimension. In the following example we will see how we can use random walk to recover a non-linear relationship between two continuous variables. 
@@ -44,7 +44,7 @@ $$x \sim \text{Uniform}(-100, 100)$$
 We then describe `y` as follows: 
 
 $$y = f(x) + \epsilon$$
-where $f(x)$ represents a non-linear function, and $\epsilon$ is the error term. For this example:
+where $f(x)$ represents a non-linear function, and $\epsilon$ is the error term. For this example let's assume:
 
 $$f(x) = \frac{1}{1+e^{-0.1x}}$$
 $$\epsilon \sim N(0, 0.3^2)$$
@@ -80,7 +80,7 @@ sigmoid = function(x){1/(1+exp(-x))}
 # simulate data
 N = 100 # num of observations
 set.seed(1)
-x = sort(runif(N, -100 , 100)) # sort for line plot
+x = sort(runif(N, -100 , 100))
 eps = rnorm(N,0,0.05) 
 fx = sigmoid(.1*x)
 y = fx + eps

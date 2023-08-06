@@ -212,7 +212,7 @@ pre.sourceCode {
 <li><span class="math inline">\(P_{t}\)</span> is the price at time <span class="math inline">\(t\)</span>.</li>
 <li><span class="math inline">\(\epsilon_{t}\)</span> is a random error term at time <span class="math inline">\(t\)</span>, typically assumed to be normally distributed with mean 0.</li>
 </ul>
-<p>This model suggests that the change in value from one time point to the next is purely random, and historical changes don’t forecast future ones.</p>
+<p>This model suggests that the change in value from one time point to the next is purely random, hence the name random walk.</p>
 </section>
 <section id="using-random-walk-to-model-non-linearity" class="level1">
 <h1>Using Random Walk to Model Non-Linearity</h1>
@@ -220,7 +220,7 @@ pre.sourceCode {
 <p>Suppose <code>x</code> is continuous and uniformly distributed between [-100, 100], represented as:</p>
 <p><span class="math display">\[x \sim \text{Uniform}(-100, 100)\]</span></p>
 <p>We then describe <code>y</code> as follows:</p>
-<p><span class="math display">\[y = f(x) + \epsilon\]</span> where <span class="math inline">\(f(x)\)</span> represents a non-linear function, and <span class="math inline">\(\epsilon\)</span> is the error term. For this example:</p>
+<p><span class="math display">\[y = f(x) + \epsilon\]</span> where <span class="math inline">\(f(x)\)</span> represents a non-linear function, and <span class="math inline">\(\epsilon\)</span> is the error term. For this example let’s assume:</p>
 <p><span class="math display">\[f(x) = \frac{1}{1+e^{-0.1x}}\]</span> <span class="math display">\[\epsilon \sim N(0, 0.3^2)\]</span></p>
 <p>We will use R to simulate data according to the above specifications:</p>
 <div class="cell" data-layout-align="center">
@@ -232,7 +232,7 @@ pre.sourceCode {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># simulate data</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="dv">100</span> <span class="co"># num of observations</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">sort</span>(<span class="fu">runif</span>(N, <span class="sc">-</span><span class="dv">100</span> , <span class="dv">100</span>)) <span class="co"># sort for line plot</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">sort</span>(<span class="fu">runif</span>(N, <span class="sc">-</span><span class="dv">100</span> , <span class="dv">100</span>))</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>eps <span class="ot">=</span> <span class="fu">rnorm</span>(N,<span class="dv">0</span>,<span class="fl">0.05</span>) </span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fx <span class="ot">=</span> <span class="fu">sigmoid</span>(.<span class="dv">1</span><span class="sc">*</span>x)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> fx <span class="sc">+</span> eps</span>
