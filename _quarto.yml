@@ -3,7 +3,7 @@ project:
   output-dir: docs
 
 website:
-  title: "Amin Shoarinejad"
+  title: "Amin S.Nejad"
   navbar:
     left:
       - href: index.qmd

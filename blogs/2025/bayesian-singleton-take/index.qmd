@@ -55,7 +55,7 @@ $$
 
 The model assumes each $\beta_{p}$ is drawn from a common distribution, typically $\mathrm{Normal}(0,\sigma_\beta^2)$. This means each product’s effect is "shrunk" toward the average effect across products, and only strong evidence in the data will pull its estimate away from the mean.
 
-But for a true singleton—one user, one product, no other overlap, the model still can't disentangle $\lambda_{c}$ from $\beta_{p}$ from the likelihood alone. Only the *sum* $\lambda_{c^\ast}+\beta_{p^\ast}$ is identified; the individual effects are not separately identifiable.
+But for a true singleton (one user, one product, no other overlap), the model still can't disentangle $\lambda_{c}$ from $\beta_{p}$ from the likelihood alone. Only the *sum* $\lambda_{c^\ast}+\beta_{p^\ast}$ is identified; the individual effects are not separately identifiable.
 
 ### Isolated dyads (no within-customer contrast)
 
