@@ -1,6 +1,11 @@
-/.quarto/
-.Rproj.user
+# Quarto cache/config
+.quarto/
+
+# macOS system files
 .DS_Store
+
+# Quarto execution freeze cache
 _freeze/
-.DS_Store
-_freeze/
+
+# RStudio user settings
+.Rproj.user/

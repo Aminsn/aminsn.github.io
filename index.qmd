@@ -25,7 +25,7 @@ about:
 ## Welcome!
 
 
-I'm Amin Shoarinejad (Shoari Nejad), a dedicated Data Scientist with a knack for unraveling the 'why' with statistical models and visualisation techniques and predict the 'what' using machine learning and deep learning models. My passion for data transcends the entire pipeline - I find thrill in every step, from the nitty-gritty of data cleaning (surprising, isn't it?) to the exhilarating task of transforming raw data into actionable insights. With each dataset, I aim to uncover hidden patterns, unlock value, and craft a compelling data-driven story. Welcome to my world, where data isn't just numbers, but a catalyst for change.
+I'm Amin Shoari Nejad, a dedicated Data Scientist with a knack for unraveling the 'why' with statistical models and visualisation techniques and predict the 'what' using machine learning and deep learning models. My passion for data transcends the entire pipeline - I find thrill in every step, from the nitty-gritty of data cleaning (surprising, isn't it?) to the exhilarating task of transforming raw data into actionable insights. With each dataset, I aim to uncover hidden patterns, unlock value, and craft a compelling data-driven story. Welcome to my world, where data isn't just numbers, but a catalyst for change.
 
 ### Skills & Interests
 
