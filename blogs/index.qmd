@@ -3,7 +3,9 @@ title: ""
 author: ""
 listing:
   contents: 
+    - "2025/**/index.qmd"
     - "2023/**/index.qmd"
+  sort: "date desc"   # newest first
   categories: true
 page-layout: full
 date-format: long

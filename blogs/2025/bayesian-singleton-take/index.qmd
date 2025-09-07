@@ -1,0 +1,98 @@
+---
+title: "Stop Deleting Your Data: Let Bayesian Models Handle It"
+description: "I once saw priors as a hurdle, now I see them as the key to honest, data-rich modeling."
+author: "Amin Shoarinejad"
+date: "2025-09-07"
+categories: [Bayesian Statistics]
+
+# Execution options
+execute: 
+  freeze: true
+---
+
+<style>
+pre.sourceCode {
+  background-color: #F0F0F0;
+}
+</style>
+
+
+Let's say you're trying to measure the impact of dozens of products, features, or treatments. You run your `GROUP BY` query and find the usual mess: some products are used by thousands of customers, and others... well, others have been used exactly once by one specific customer.
+
+This is the classic singleton problem, and it's a pain. The effect of that one-off product is perfectly confounded with the unique quirks of that one-off customer. Is the product amazing, or is the customer just a hyper-performer? You can't tell.
+
+The standard playbook? Just filter them out.
+
+```sql
+... WHERE product_id IN (
+  SELECT product_id
+  FROM usage
+  GROUP BY product_id
+  HAVING COUNT(DISTINCT user_id) > 1
+)
+```
+
+It feels clean, but it's a trap. Dropping that data means:
+
+1. You're losing statistical power for other covariates in your model. That singleton user still has an age, a subscription tier, and other features that are valuable for estimating those effects.
+2. It doesn't even solve the underlying issue. A popular product's estimated effect can still be hijacked by a single "heavy user" whose data looks nothing like anyone else's.
+
+Instead of making an arbitrary call to delete data, we can build a model that's smart enough to handle the mess. This is a perfect job for a Bayesian hierarchical model.
+
+## Modeling Our Skepticism
+
+Let's start with a standard hierarchical (or mixed-effects) model. We'll model our target variable $y$ with a structure that includes fixed effects and random effects for customers and products, and we make the likelihood explicit:
+
+$$
+y_i \sim \mathrm{Normal}(\mu_i, \sigma_\varepsilon^2), \qquad
+\mu_i = \alpha + \boldsymbol{Z}_i^{\mathsf T} \gamma + \lambda_{c[i]} + \beta_{p[i]} \, .
+$$
+
+- $\alpha$ is our global intercept.
+- $\boldsymbol{Z}_i^{\mathsf T} \gamma$ handles fixed effects (e.g., a customer's age).
+- $\lambda_{c}$ is a random effect that soaks up each customer's baseline tendencies.
+- $\beta_{p}$ is the random effect for the product, the lift we actually care about.
+
+The model assumes each $\beta_{p}$ is drawn from a common distribution, typically $\mathrm{Normal}(0,\sigma_\beta^2)$. This means each product’s effect is "shrunk" toward the average effect across products, and only strong evidence in the data will pull its estimate away from the mean.
+
+But for a true singleton—one user, one product, no other overlap, the model still can't disentangle $\lambda_{c}$ from $\beta_{p}$ from the likelihood alone. Only the *sum* $\lambda_{c^\ast}+\beta_{p^\ast}$ is identified; the individual effects are not separately identifiable.
+
+### Isolated dyads (no within-customer contrast)
+
+If a product $p^\ast$ is used only by a single customer $c^\ast$ *and* that customer does not use any other product (there may be many observations of this pair), a simpler model without an interaction can already behave skeptically. With a tighter prior on $\sigma_\beta$ compared to $\sigma_\lambda$, the posterior will typically attribute the pair's signal to the customer baseline $\lambda_{c^\ast}$ and keep $\beta_{p^\ast}$ near zero. In this isolated-dyad setting, an interaction term is optional.
+
+## The Real Trick: Priors on an Interaction Term (when it's needed)
+
+Where the previous model *can* go wrong is when we have a *singleton product* used by a customer who also uses other products. In that case, we observe a *within-customer contrast*:
+
+$$
+y_{c^*,p^*} - y_{c^*,q} \approx \beta_{p^*} - \beta_q \, ,
+$$
+
+so any one-off bump unique to $p^*$ for that customer cannot be absorbed by $\lambda_{c^*}$, which cancels out. Without further structure, the model may attribute that unique blip to a general product effect $\beta_{p^*}$ even if it lacks corroboration across other customers. While it’s entirely possible that $\beta_{p^*}$’s effect is genuine, it could just as well be driven by unaccounted confounders. For example, the customer changing their lifestyle at the same time they adopted the new product. 
+
+The question becomes: do we trust that the product is truly different from the average solely based on this single customer’s outcome, or do we remain skeptical unless the effect is confirmed by multiple customers? I prefer the latter stance. To enable this, we give the model another place to put the blame by adding a customer–product interaction term, $\eta_{p,c}$:
+
+$$
+\mu_i = \alpha + \boldsymbol{Z}_i^{\mathsf T} \gamma + \lambda_{c[i]} + \beta_{p[i]} + \eta_{p[i],c[i]} \, .
+$$
+
+Now, for any given observation, the model can attribute a large effect either to the product in general ($\beta_p$) or to the unique combination of that specific customer using that specific product ($\eta_{p,c}$).
+
+This is where the priors do the heavy lifting. We are opinionated about the variance components:
+
+- For the interaction effects, $\eta_{p,c}\sim \mathrm{Normal}(0,\sigma_\eta^2)$, we use a *loose* prior on $\sigma_\eta$. This tells the model: "One-off, idiosyncratic outcomes can occur when a specific person uses a specific product. Use this term to explain large effects that aren't corroborated by other users."
+- For the main product effects, $\beta_{p}\sim \mathrm{Normal}(0,\sigma_\beta^2)$, we place a *tighter* prior on $\sigma_\beta$ compared to $\sigma_\eta$. We're telling the model: "I'm skeptical. Don't move a $\beta_{p}$ far from zero unless there's strong, consistent evidence across multiple customers."
+- Customer baselines $\lambda_c\sim \mathrm{Normal}(0,\sigma_\lambda^2)$ are regularized with a sensible (not overly loose) prior. This helps in sparse settings and ensures $\lambda_c$ captures persistent, across-product tendencies.
+
+## The Payoff: A Model That Tells the Truth
+
+This setup forces the model to behave exactly as we'd want a skeptical analyst to.
+
+If multiple customers use product $A$ and consistently see a positive lift, the data provides a clear, shared signal. The model will confidently estimate a positive $\beta_A$ with a tight posterior distribution.
+
+But what about that singleton product, $B$, used by a customer (e.g. $\text{user123}$) who also uses others? The single heavy user might have a massive outcome for $B$. The model, however, sees no corroborating evidence. Because the prior on $\sigma_\beta$ makes it "expensive" to declare a large general product effect, the model will find it much "cheaper" to explain the outlier result using the flexible interaction term, $\eta_{B,\text{user123}}$.
+
+The result? The posterior for $\beta_B$ will remain shrunk close to zero with appropriately wide uncertainty. The model is effectively telling you, "Based on the data I have, I can't distinguish this product's effect from a random user-specific fluke."
+
+And that is a much more useful and honest answer than a noisy point estimate from a single observation. It allows you to keep all your data while building a model that learns what can be learned and transparently reports its uncertainty about what can't.
