@@ -1,7 +1,7 @@
 ---
 title: "Modeling Non-linear Effects using Random Walk in R-INLA"
 description: "A guide to modeling non-linear effects using random walk with the R-INLA package."
-author: "Amin Shoarinejad"
+author: "Amin Shoari Nejad"
 date: "2023-08-06"
 categories: [R, Bayesian Statistics, INLA, Random Walk]
 
