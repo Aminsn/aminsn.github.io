@@ -9,3 +9,5 @@ _freeze/
 
 # RStudio user settings
 .Rproj.user/
+
+/.quarto/

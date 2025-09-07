@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2025-09-07">
 <meta name="description" content="I once saw priors as a hurdle, now I see them as the key to honest, data-rich modeling.">
 
-<title>Amin Shoarinejad - Stop Deleting Your Data: Let Bayesian Models Handle It</title>
+<title>Amin S.Nejad - Stop Deleting Your Data: Let Bayesian Models Handle It</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -109,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../../../index.html">
-    <span class="navbar-title">Amin Shoarinejad</span>
+    <span class="navbar-title">Amin S.Nejad</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -225,7 +225,7 @@ y_i \sim \mathrm{Normal}(\mu_i, \sigma_\varepsilon^2), \qquad
 <li><span class="math inline">\(\beta_{p}\)</span> is the random effect for the product, the lift we actually care about.</li>
 </ul>
 <p>The model assumes each <span class="math inline">\(\beta_{p}\)</span> is drawn from a common distribution, typically <span class="math inline">\(\mathrm{Normal}(0,\sigma_\beta^2)\)</span>. This means each product’s effect is “shrunk” toward the average effect across products, and only strong evidence in the data will pull its estimate away from the mean.</p>
-<p>But for a true singleton—one user, one product, no other overlap, the model still can’t disentangle <span class="math inline">\(\lambda_{c}\)</span> from <span class="math inline">\(\beta_{p}\)</span> from the likelihood alone. Only the <em>sum</em> <span class="math inline">\(\lambda_{c^\ast}+\beta_{p^\ast}\)</span> is identified; the individual effects are not separately identifiable.</p>
+<p>But for a true singleton (one user, one product, no other overlap), the model still can’t disentangle <span class="math inline">\(\lambda_{c}\)</span> from <span class="math inline">\(\beta_{p}\)</span> from the likelihood alone. Only the <em>sum</em> <span class="math inline">\(\lambda_{c^\ast}+\beta_{p^\ast}\)</span> is identified; the individual effects are not separately identifiable.</p>
 <section id="isolated-dyads-no-within-customer-contrast" class="level3">
 <h3 class="anchored" data-anchor-id="isolated-dyads-no-within-customer-contrast">Isolated dyads (no within-customer contrast)</h3>
 <p>If a product <span class="math inline">\(p^\ast\)</span> is used only by a single customer <span class="math inline">\(c^\ast\)</span> <em>and</em> that customer does not use any other product (there may be many observations of this pair), a simpler model without an interaction can already behave skeptically. With a tighter prior on <span class="math inline">\(\sigma_\beta\)</span> compared to <span class="math inline">\(\sigma_\lambda\)</span>, the posterior will typically attribute the pair’s signal to the customer baseline <span class="math inline">\(\lambda_{c^\ast}\)</span> and keep <span class="math inline">\(\beta_{p^\ast}\)</span> near zero. In this isolated-dyad setting, an interaction term is optional.</p>
