@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Amin Shoari Nejad">
+<meta name="dcterms.date" content="2026-08-22">
+<meta name="description" content="Introducing duktr, a Python package I developed for discovering emerging clusters, themes, and canonical entities in text.">
 
-<title>About – Amin S.Nejad</title>
+<title>Connect the Dots in Text: LLM-Powered Dynamic Concept Mining and Clustering with duktr – Amin S.Nejad</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +23,62 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-b17824a064795f857e5c9a027c812419.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-b17824a064795f857e5c9a027c812419.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -79,9 +117,9 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Amin S.Nejad</span>
     </a>
   </div>
@@ -92,11 +130,11 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./blogs/index.html"> 
+    <a class="nav-link" href="../../../blogs/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -110,22 +148,54 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introducing-duktr" id="toc-introducing-duktr" class="nav-link active" data-scroll-target="#introducing-duktr">Introducing <code>duktr</code></a></li>
+  <li><a href="#how-it-works" id="toc-how-it-works" class="nav-link" data-scroll-target="#how-it-works">How It Works</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#why-i-built-duktr" id="toc-why-i-built-duktr" class="nav-link" data-scroll-target="#why-i-built-duktr">Why I Built <code>duktr</code></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">About</h1>
+<h1 class="title">Connect the Dots in Text: LLM-Powered Dynamic Concept Mining and Clustering with duktr</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Python</div>
+    <div class="quarto-category">NLP</div>
+    <div class="quarto-category">LLMs</div>
+    <div class="quarto-category">Clustering</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Introducing duktr, a Python package I developed for discovering emerging clusters, themes, and canonical entities in text.
+  </div>
 </div>
 
 
+<div class="quarto-title-meta column-page-left">
 
-<div class="quarto-title-meta column-page">
-
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Amin Shoari Nejad </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 22, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -135,9 +205,76 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>About this site</p>
+<style>
+pre.sourceCode {
+  background-color: #F0F0F0;
+}
+</style>
+<p style="text-align: center;">
+<img src="https://github.com/user-attachments/assets/333ae6bb-5074-4482-81d1-cb326651fe17" alt="A short demonstration of duktr clustering text into an evolving concept catalog." style="width: 85%;">
+</p>
+<p>In the world of text analysis, we often rely on predefined labels to categorize our data. But what if the concepts we are interested in are not known in advance? What if they evolve and change over time?</p>
+<p>This is a common challenge in many real-world applications, from analyzing customer feedback to tracking topics in the news. Predefined labels can be too rigid, forcing us to fit our data into a fixed set of categories. This can lead to a loss of nuance and a failure to identify new and emerging trends. A common workaround is to use unsupervised clustering algorithms, but these often require extensive hyperparameter tuning and may not align with the specific concepts we care about.</p>
+<section id="introducing-duktr" class="level2">
+<h2 class="anchored" data-anchor-id="introducing-duktr">Introducing <code>duktr</code></h2>
+<p>I developed <a href="https://github.com/Aminsn/duktr"><code>duktr</code></a>, an LLM-powered Python package for dynamic concept mining and mixed-membership (multi-label) assignment and clustering over text. It maintains an evolving catalog of concepts and, for each input text, returns the set of concepts that describe it. Where possible, it reuses existing concepts—enabling clustering—and introduces new ones when needed.</p>
+<p>I built it for use cases in which the concept set cannot be predefined and will evolve over time, such as news topics, issues in support tickets, patients’ symptoms, or canonical product identities. You define what a “concept” means for your use case, and <code>duktr</code> extracts the concepts you have in mind and uses them to cluster textual information.</p>
+</section>
+<section id="how-it-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-it-works">How It Works</h2>
+<p>I designed <code>duktr</code> around a novel approach to concept mining that leverages the power of large language models (LLMs).</p>
+<p>At its core, <code>duktr</code> works by iteratively building a catalog of concepts. For each new document, it first tries to describe the document using concepts that are already in the catalog. If it cannot, it uses the LLM to generate new concepts and adds them to the catalog.</p>
+<p>To make this process scalable, I implemented a technique called <strong>progressive partitioning</strong>. Instead of sending the entire concept catalog to the LLM every time, <code>duktr</code> can send small subsets of the catalog sequentially. This keeps the LLM inputs bounded and allows the package to handle large catalogs.</p>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>First, install the package using <code>pip</code>. <code>duktr</code> has no external dependencies and relies only on Python’s standard library:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install duktr</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then, use <code>ConceptMiner</code> to start mining concepts from your text data:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> duktr <span class="im">import</span> ConceptMiner, GeminiProvider</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize a miner that extracts "symptom" as the target concept from textual records.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>miner <span class="op">=</span> ConceptMiner(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>GeminiProvider(api_key<span class="op">=</span><span class="st">"YOUR_API_KEY"</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    task<span class="op">=</span><span class="st">"Extract the symptom(s) of the patient from their record."</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    concept<span class="op">=</span><span class="st">"symptom"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    rules<span class="op">=</span><span class="st">"""</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">    - Use short noun phrases (1–3 words)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st">    - Symptom(s) must be independent; no duplicates</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">    """</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Example inputs (note: the third record paraphrases the first).</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>texts <span class="op">=</span> [</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Patient reports frequent headaches and occasional dizziness."</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"The individual is experiencing shortness of breath during exertion."</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"The patient describes recurrent head pain along with vertigo."</span>,  <span class="co"># Paraphrased version of the first text</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Mine concepts per text.</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>per_text_concepts <span class="op">=</span> miner.mine(texts)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(per_text_concepts)  <span class="co"># Concepts found in each record</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(miner.catalog)      <span class="co"># Global catalog across all records</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected output:</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># [{"Headache", "Dizziness"}, {"Shortness of breath"}, {"Headache", "Dizziness"}]</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># {"Headache", "Dizziness", "Shortness of breath"}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="why-i-built-duktr" class="level2">
+<h2 class="anchored" data-anchor-id="why-i-built-duktr">Why I Built <code>duktr</code></h2>
+<p>I built <code>duktr</code> to offer several advantages over traditional approaches to text categorization and clustering:</p>
+<ul>
+<li><strong>Flexibility:</strong> It is not limited by predefined labels and can discover new concepts as they emerge from your data.</li>
+<li><strong>Nuance:</strong> It allows each document to be associated with multiple concepts, providing a more nuanced understanding of your text data.</li>
+<li><strong>Scalability:</strong> It can handle large concept catalogs using its progressive partitioning algorithm.</li>
+<li><strong>Extensibility:</strong> You can use OpenAI, Gemini, or your own LLM, including models from Hugging Face.</li>
+<li><strong>Intuitiveness:</strong> Instead of fiddling with the hyperparameters of unsupervised algorithms to “find the sweet spot,” you can teach the LLM what you are looking for in natural language and let it do what it is increasingly good at: reasoning and deduction.</li>
+</ul>
+<p>You can find the source code and documentation on <a href="https://github.com/Aminsn/duktr">GitHub</a>, or install the latest release from <a href="https://pypi.org/project/duktr/">PyPI</a>.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

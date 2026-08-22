@@ -1,0 +1,94 @@
+---
+title: "Connect the Dots in Text: LLM-Powered Dynamic Concept Mining and Clustering with duktr"
+description: "Introducing duktr, a Python package I developed for discovering emerging clusters, themes, and canonical entities in text."
+author: "Amin Shoari Nejad"
+date: "2026-08-22"
+categories: [Python, NLP, LLMs, Clustering]
+image: thumbnail.png
+
+# Execution options
+execute:
+  freeze: true
+---
+
+<style>
+pre.sourceCode {
+  background-color: #F0F0F0;
+}
+</style>
+
+<p style="text-align: center;">
+  <img src="https://github.com/user-attachments/assets/333ae6bb-5074-4482-81d1-cb326651fe17" alt="A short demonstration of duktr clustering text into an evolving concept catalog." style="width: 85%;" />
+</p>
+
+In the world of text analysis, we often rely on predefined labels to categorize our data. But what if the concepts we are interested in are not known in advance? What if they evolve and change over time?
+
+This is a common challenge in many real-world applications, from analyzing customer feedback to tracking topics in the news. Predefined labels can be too rigid, forcing us to fit our data into a fixed set of categories. This can lead to a loss of nuance and a failure to identify new and emerging trends. A common workaround is to use unsupervised clustering algorithms, but these often require extensive hyperparameter tuning and may not align with the specific concepts we care about.
+
+## Introducing `duktr`
+
+I developed [`duktr`](https://github.com/Aminsn/duktr), an LLM-powered Python package for dynamic concept mining and mixed-membership (multi-label) assignment and clustering over text. It maintains an evolving catalog of concepts and, for each input text, returns the set of concepts that describe it. Where possible, it reuses existing concepts—enabling clustering—and introduces new ones when needed.
+
+I built it for use cases in which the concept set cannot be predefined and will evolve over time, such as news topics, issues in support tickets, patients' symptoms, or canonical product identities. You define what a “concept” means for your use case, and `duktr` extracts the concepts you have in mind and uses them to cluster textual information.
+
+## How It Works
+
+I designed `duktr` around a novel approach to concept mining that leverages the power of large language models (LLMs).
+
+At its core, `duktr` works by iteratively building a catalog of concepts. For each new document, it first tries to describe the document using concepts that are already in the catalog. If it cannot, it uses the LLM to generate new concepts and adds them to the catalog.
+
+To make this process scalable, I implemented a technique called **progressive partitioning**. Instead of sending the entire concept catalog to the LLM every time, `duktr` can send small subsets of the catalog sequentially. This keeps the LLM inputs bounded and allows the package to handle large catalogs.
+
+## Getting Started
+
+First, install the package using `pip`. `duktr` has no external dependencies and relies only on Python's standard library:
+
+```bash
+pip install duktr
+```
+
+Then, use `ConceptMiner` to start mining concepts from your text data:
+
+```python
+from duktr import ConceptMiner, GeminiProvider
+
+# Initialize a miner that extracts "symptom" as the target concept from textual records.
+miner = ConceptMiner(
+    llm=GeminiProvider(api_key="YOUR_API_KEY"),
+    task="Extract the symptom(s) of the patient from their record.",
+    concept="symptom",
+    rules="""
+    - Use short noun phrases (1–3 words)
+    - Symptom(s) must be independent; no duplicates
+    """,
+)
+
+# Example inputs (note: the third record paraphrases the first).
+texts = [
+    "Patient reports frequent headaches and occasional dizziness.",
+    "The individual is experiencing shortness of breath during exertion.",
+    "The patient describes recurrent head pain along with vertigo.",  # Paraphrased version of the first text
+]
+
+# Mine concepts per text.
+per_text_concepts = miner.mine(texts)
+
+print(per_text_concepts)  # Concepts found in each record
+print(miner.catalog)      # Global catalog across all records
+
+# Expected output:
+# [{"Headache", "Dizziness"}, {"Shortness of breath"}, {"Headache", "Dizziness"}]
+# {"Headache", "Dizziness", "Shortness of breath"}
+```
+
+## Why I Built `duktr`
+
+I built `duktr` to offer several advantages over traditional approaches to text categorization and clustering:
+
+- **Flexibility:** It is not limited by predefined labels and can discover new concepts as they emerge from your data.
+- **Nuance:** It allows each document to be associated with multiple concepts, providing a more nuanced understanding of your text data.
+- **Scalability:** It can handle large concept catalogs using its progressive partitioning algorithm.
+- **Extensibility:** You can use OpenAI, Gemini, or your own LLM, including models from Hugging Face.
+- **Intuitiveness:** Instead of fiddling with the hyperparameters of unsupervised algorithms to “find the sweet spot,” you can teach the LLM what you are looking for in natural language and let it do what it is increasingly good at: reasoning and deduction.
+
+You can find the source code and documentation on [GitHub](https://github.com/Aminsn/duktr), or install the latest release from [PyPI](https://pypi.org/project/duktr/).
