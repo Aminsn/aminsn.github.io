@@ -30,7 +30,6 @@ I'm Amin, a dedicated Data Scientist with a knack for unraveling the 'why' with 
 ### Skills & Interests
 
 <p class="d-flex flex-wrap gap-3" role="list" aria-label="Skills and interests">
-  <span role="listitem"><i class="bi bi-code-slash" aria-hidden="true"></i> Coding</span>
   <span role="listitem"><i class="bi bi-bar-chart-line" aria-hidden="true"></i> Data Science</span>
   <span role="listitem"><i class="bi bi-cpu" aria-hidden="true"></i> Machine Learning</span>
   <span role="listitem"><i class="bi bi-graph-up" aria-hidden="true"></i> Bayesian Statistics</span>
